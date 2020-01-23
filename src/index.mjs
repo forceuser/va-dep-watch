@@ -88,7 +88,7 @@ async function findLessDeps (path) {
 }
 
 export default async function main (argv) {
-	const {entry, command, name} = argv;
+	const {entry, command, name, callback} = argv;
 	const moduleType = $path.extname(entry).replace(/^\./, "");
 	async function findDepsRecursive (path, result = []) {
 		if (!$path.extname(path)) {
@@ -135,7 +135,10 @@ export default async function main (argv) {
 			updateDeps();
 			clearTimeout(timer);
 			timer = setTimeout(() => {
-				execOne(command);
+				if (typeof callback === "function") {
+					callback(eventType, path);
+				}
+				command && execOne(command);
 			}, 1000);
 		}
 		catch (error) {
