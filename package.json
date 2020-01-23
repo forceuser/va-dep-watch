@@ -1,0 +1,85 @@
+{
+	"name": "va-dep-watch",
+	"version": "0.0.2",
+	"description": "projectdescription",
+	"license": "MIT",
+	"main": "src/index.mjs",
+	"module": "src/index.mjs",
+	"bin": "src/cli.mjs",
+	"engines": {
+		"node": ">=10.11.0"
+	},
+	"_moduleAliases": {
+		"va-dep-watch": "./src/index.js"
+	},
+	"nyc": {
+		"temp-dir": "./coverage",
+		"report-dir": "./coverage",
+		"reporter": [
+			"lcov",
+			"text"
+		]
+	},
+	"scripts": {
+		"init": "rm -rf node_modules > /dev/null && npm i",
+		"start": "run-s start:*",
+		"build": "run-s build:*",
+		"bump": "npm version patch --no-git-tag-version",
+		"update": "npx npm-check-updates -u && npm install && npm update --dev && npm audit fix",
+		"test": "eslint .",
+		"build:0": "",
+		"documentation": "",
+		"fix": "eslint --fix .",
+		"coverage": "codecov",
+		"release": "npm run release-patch",
+		"release-nobump": "npm test && npm run build && npm run documentation && va-release --no-github --no-npm",
+		"release-patch": "npm test && npm run build && npm run documentation && va-release --version patch",
+		"release-minor": "npm test && npm run build && npm run documentation && va-release --version minor",
+		"release-major": "npm test && npm run build && npm run documentation && va-release --version major",
+		"build-templates": "va-release -t"
+	},
+	"va-release": {
+		"assets": "dist/**/*",
+		"files": [
+			{
+				"cwd": "templates/",
+				"src": [
+					"**/*"
+				],
+				"dest": "./"
+			}
+		],
+		"library": "vaDepWatch"
+	},
+	"keywords": [],
+	"dependencies": {
+		"chokidar": "^3.3.1",
+		"colors": "^1.4.0",
+		"less": "^3.10.3",
+		"precinct": "^6.2.0",
+		"shelljs": "^0.8.3",
+		"yargs": "^15.1.0"
+	},
+	"devDependencies": {
+		"babel-eslint": ">=10.0.3",
+		"cross-env": "^6.0.3",
+		"deepmerge": "^4.2.2",
+		"eslint": "^6.8.0",
+		"esm": "^3.2.25",
+		"fs-extra": "^8.1.0",
+		"globby": "^11.0.0",
+		"module-alias": "^2.2.2",
+		"npm-run-all": "^4.1.5",
+		"universal-url": "^2.0.0",
+		"va-release": "^1.1.15"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/forceuser/va-dep-watch.git"
+	},
+	"bugs": {
+		"url": "https://github.com/forceuser/va-dep-watch/issues"
+	},
+	"homepage": "https://github.com/forceuser/va-dep-watch#readme",
+	"tonicExampleFilename": "tonic-example.js"
+}
