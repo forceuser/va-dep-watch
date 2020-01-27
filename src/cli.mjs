@@ -22,7 +22,12 @@ const argv = yargs(process.argv.slice(2))
 					alias: ["n"],
 					describe: "name to display in console log",
 					type: "string",
-				});
+				})
+				.option("rootpath", {
+					alias: ["rp"],
+					describe: "rootpath to search for modules",
+					type: "string",
+				})
 		},
 		(argv) => {
 			main(argv);

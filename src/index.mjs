@@ -74,11 +74,11 @@ function findLessImports (ast, result = []) {
 	});
 	return result;
 }
-async function findLessDeps (path) {
+async function findLessDeps (path, options = {}) {
 	const dir = $path.dirname(path);
 	let ast;
 	try {
-		ast = await lessAST(path, {processImports: false});
+		ast = await lessAST(path, Object.assign({}, options, {processImports: false}));
 	}
 	catch (error) {
 		//
@@ -88,8 +88,15 @@ async function findLessDeps (path) {
 }
 
 export default async function main (argv) {
-	const {entry, command, name, callback} = argv;
+	let {entry, command, name, callback, options, rootpath} = argv;
 	const moduleType = $path.extname(entry).replace(/^\./, "");
+	if (options && typeof options === "string") {
+		options = JSON.parse(options);
+	}
+	options = options || {};
+	if (rootpath) {
+		options.rootpath = rootpath;
+	}
 	async function findDepsRecursive (path, result = []) {
 		if (!$path.extname(path)) {
 			path += $path.extname(entry);
@@ -101,9 +108,9 @@ export default async function main (argv) {
 		const dir = $path.dirname(path);
 		const deps = await (async () => {
 			if (moduleType === "less") {
-				return findLessDeps(path);
+				return findLessDeps(path, options);
 			}
-			return (precinct.paperwork($path.resolve(cwd, path)) || []).map(p => $path.resolve(dir, p));
+			return (precinct.paperwork($path.resolve(cwd, path), options) || []).map(p => $path.resolve(dir, p));
 		})();
 		// console.log("deps", path, deps);
 		await Promise.all(deps.map(async dep => {
